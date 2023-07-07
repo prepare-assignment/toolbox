@@ -160,3 +160,4 @@ cython_debug/
 .idea/
 
 .attach_pid*
+tests.xml
