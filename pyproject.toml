@@ -12,6 +12,11 @@ python = "^3.8"
 braceexpand = "^0.1.7"
 
 
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+mypy = "^1.4.1"
+pytest-cov = "^4.1.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
