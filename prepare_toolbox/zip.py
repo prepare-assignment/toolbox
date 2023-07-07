@@ -11,5 +11,5 @@ def create_zip(name: str, files: List[str], output: Optional[str] = None) -> Non
     if output:
         file = os.path.join(output, file)
     with ZipFile(file, 'w') as handle:
-        for file in files:
-            handle.write(file)
+        for f in files:
+            handle.write(f)
