@@ -18,6 +18,9 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      checks: write
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -120,4 +123,4 @@ jobs:
         if: steps.cached-poetry-venv.outputs.cache-hit != 'true'
         run: poetry install --no-interaction
       - name: Type checker
-        run: poetry run mypy codestripper
+        run: poetry run mypy prepare_toolbox
