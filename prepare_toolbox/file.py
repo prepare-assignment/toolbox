@@ -14,15 +14,15 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
         globs = [globs]
     matched: Set[str] = set()
     if relative_to is not None:
-        relative_to = Path(relative_to).resolve().as_posix()
+        relative_to = Path(os.path.join(os.getcwd(), relative_to))
     else:
         relative_to = Path(os.getcwd())
     for g in globs:
-        path = Path(os.path.join(relative_to, g)).resolve().as_posix()
+        path = os.path.join(relative_to, g)
         for expanded in braceexpand(path):
             for file in glob.glob(expanded, recursive=recursive):
-                relative = Path(file).relative_to(relative_to).as_posix()
-                matched.add(relative)
+                relative = Path(file).relative_to(relative_to)
+                matched.add(str(relative))
     return matched
 
 
