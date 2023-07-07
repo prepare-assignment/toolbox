@@ -26,7 +26,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
     return matched
 
 
-def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Iterable[str], None] = None,
+def get_matching_files(included: Union[str, List[str]], excluded: Union[str, List[str], None] = None,
                        relative_to: Union[str, Path, None] = None, recursive: bool = True) -> List[str]:
     """
     Get files matching the included glob and not matching the excluded glob.
@@ -37,8 +37,8 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Ite
     :return List[str]: List of matched files (as posix strings)
     :raises ValueError: If any of the matched files is outside the relative_to directory (or its children)
     """
-    included = __get_matching_files(included, relative_to=relative_to, recursive=recursive)
+    matched_included = __get_matching_files(included, relative_to=relative_to, recursive=recursive)
     if excluded is not None:
-        excluded = __get_matching_files(excluded, relative_to=relative_to, recursive=recursive)
-        included -= excluded
-    return sorted(list(included))
+        matched_excluded = __get_matching_files(excluded, relative_to=relative_to, recursive=recursive)
+        matched_included -= matched_excluded
+    return sorted(list(matched_included))
