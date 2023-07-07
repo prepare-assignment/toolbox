@@ -18,8 +18,8 @@ def test_create_zip(monkeypatch: pytest.MonkeyPatch) -> None:
     path_exists = os.path.exists(zip_path)
     count = 0
     if path_exists:
-        zip = ZipFile(zip_path)
-        count = len(zip.namelist())
+        with ZipFile(zip_path, 'r') as zip:
+            count = len(zip.namelist())
         os.remove(zip_path)
     assert path_exists and count == 5
 
