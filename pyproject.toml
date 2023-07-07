@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "prepare-toolbox"
+version = "0.1.0"
+description = "Toolbox containing helper functions for prepare-assignment actions"
+authors = ["Bonajo <m.bonajo@fontys.nl>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "prepare_toolbox"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+braceexpand = "^0.1.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
