@@ -1,9 +1,16 @@
 import glob
 import os
+import sys
 from pathlib import Path
-from typing import Union, List, Iterable, Set
+from typing import Union, List, Iterable, Set, Iterator
 
 from braceexpand import braceexpand
+
+
+def __expand(path: str) -> Iterator[str]:
+    if sys.platform == "win32":
+        return braceexpand(path, escape=False)
+    return braceexpand(path)
 
 
 def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, Path, None] = None,
@@ -19,7 +26,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
         relative_to = Path(os.getcwd())
     for g in globs:
         path = os.path.join(relative_to, g)
-        for expanded in braceexpand(path):
+        for expanded in __expand(path):
             for file in glob.glob(expanded, recursive=recursive):
                 relative = Path(file).relative_to(relative_to)
                 matched.add(str(relative))
