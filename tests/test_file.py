@@ -17,6 +17,7 @@ test_project_dir = os.path.join(Path(__file__).parent.absolute(), "testproject")
         (["**/*.java"], [], None, False, 0),
         (["**/*.java"], [], os.path.join("src", "main"), True, 3),
         (["**/*.java"], ["**/GradeList.java"], None, False, 0),
+        (["src/main"], ["src/main"], None, False, 0),
     ]
 )
 def test_get_matching_files(included: List[str], excluded: List[str], relative_to: str, recursive: bool, expected: int, monkeypatch: pytest.MonkeyPatch) -> None:
