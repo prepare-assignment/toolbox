@@ -9,7 +9,7 @@ from braceexpand import braceexpand
 
 def __expand(path: str) -> Iterator[str]:
     if sys.platform == "win32":
-        return braceexpand(path, escape=False)
+        return braceexpand(path, escape=False)  # pragma: no cover
     return braceexpand(path)
 
 
