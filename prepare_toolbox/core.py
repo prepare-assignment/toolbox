@@ -1,9 +1,9 @@
 import json
 import os
 import sys
-from typing import Any
+from typing import Any, Union
 
-from mypy.typeshed.stdlib.builtins import enumerate
+from prepare_toolbox.command import issue_command
 
 
 def get_input(key: str, required: bool = False, trim_whitespace: bool = True) -> Any:
@@ -36,26 +36,30 @@ def get_input(key: str, required: bool = False, trim_whitespace: bool = True) ->
     return None
 
 
-def set_output(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def set_output(name: str, value: Any) -> None:
+    issue_command("set-output", "", {name: value})
 
 
-def set_failed(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def set_failed(message: Union[str, Exception]) -> None:
+    if isinstance(message, Exception):
+        message = str(message)
+    issue_command("set-failed", message)  # type: ignore
     sys.exit(1)
 
 
-def debug(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def debug(message: str) -> None:
+    issue_command("debug", message)
 
 
-def info(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def info(message: str) -> None:
+    issue_command("info", message)
 
 
-def warning(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def warning(message: str) -> None:
+    issue_command("warning", message)
 
 
-def error(name: str, value: str) -> None:
-    print(f"{name}-{value}")
+def error(message: Union[str, Exception]) -> None:
+    if isinstance(message, Exception):
+        message = str(message)
+    issue_command("error", message)
