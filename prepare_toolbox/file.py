@@ -39,10 +39,12 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
     """
     Get files matching the included glob and not matching the excluded glob.
     :param included: Glob(s) that should be matched
-    :param excluded: Glob(s) that should not be matched
-    :param relative_to: Set relative path, the globs are matched relative to this path, defaults to pwd
-    :param allow_outside_working_dir: allow relative_to and the matched glob(s) to be outside the working directory
-    :param recursive: Whether the glob should recurse directories
+    :param excluded: Glob(s) that should be excluded from being matched.
+        I.e. if a path matches the `included` glob, it should not be process if it also matches the `excluded` glob
+    :param relative_to: Set relative path from where the globs should be matched, defaults to pwd
+    :param allow_outside_working_dir: Allow `relative_to` to be outside the current working directory.
+        Allow the matched glob(s) to be outside the `relative_to` directory.
+    :param recursive: If true the glob should recurse directories.
     :return List[str]: List of matched files (as posix strings)
     :raises ValueError: - If either relative_to is outside the working directory and allow_outside_working_dir is false.
                         - If a matched glob is outside the relative_to directory and allow_outside_working_dir is false.
