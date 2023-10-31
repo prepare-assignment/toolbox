@@ -34,7 +34,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
 
 
 def get_matching_files(included: Union[str, List[str]], excluded: Union[str, List[str], None] = None,
-                       relative_to: Union[str, Path, None] = None, allow_outside_working_dir: bool = False,
+                       relative_to: Union[str, None] = None, allow_outside_working_dir: bool = False,
                        recursive: bool = True) -> List[str]:
     """
     Get files matching the included glob and not matching the excluded glob.

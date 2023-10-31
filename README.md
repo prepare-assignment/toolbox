@@ -27,19 +27,19 @@ Furthermore it defines helper methods for logging:
 
 - `set_failed`: log exception/message with level `ERROR` and exit the process
 - `set_error`: log exception/message with level `ERROR`
-- `set_warning`: log exception/message with level `WARNING`
-- `info`: log exception/message with level `INFO`
-- `debug`: log exception/message with level `DEBUG`
+- `set_warning`: log message with level `WARNING`
+- `info`: log message with level `INFO`
+- `debug`: log message with level `DEBUG`
 
 ## Finding files
 
 A common task for actions is to find files based on a glob. To make this repetitive task easier a helper function is defined in `file.py`. The function `get_matching_files` returns a list of paths (as strings) that match the files, given the parameters. The following parameters are available:
 
-- `included`: Glob(s) that should be matched
-- `excluded`: Glob(s) that should be excluded from being matched. I.e. if a path matches the `included` glob, it should not be process if it also matches the `excluded` glob
-- `relative_to`: Set relative path from where the globs should be matched, defaults to pwd
-- `allow_outside_working_dir`: Allow `relative_to` to be outside the current working directory. Allow the matched glob(s) to be outside the `relative_to` directory.
-- `recursive`: If true the glob should recurse directories. 
+- `included: Union[str, List[str]]`: Glob(s) that should be matched
+- `excluded: Union[str, List[str], None]`: Glob(s) that should be excluded from being matched. I.e. if a path matches the `included` glob, it should not be processed if it also matches the `excluded` glob. Default: `None`
+- `relative_to: : Union[str, None]`: Set relative path from where the globs should be matched. If `None` the current working directory is used. Default: `None`
+- `allow_outside_working_dir: bool`: Allow `relative_to` to be outside the current working directory. Allow the matched glob(s) to be outside the `relative_to` directory. Default: `False`
+- `recursive: bool`: If true the glob should recurse directories. Default: `True` 
 
 ## Creating zip files
 
@@ -47,5 +47,5 @@ To help with creating zip files the `zip.py` adds a helper method `create_zip` t
 
 - `name: str`: name of the archive
 - `files: List[str]`: paths to the files to include
-- `output: Optional[str] = None`: the output directory to write to (default to current working directory)
+- `output: Optional[str]`: the output directory to write to (default to current working directory). Default: `None`
 
