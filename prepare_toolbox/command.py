@@ -3,7 +3,7 @@ import json
 import urllib.parse
 from typing import Literal, Optional, Final, Any, Dict
 
-Command = Literal["set-output", "set-failed", "error", "warning", "info", "debug"]
+Command = Literal["set-output", "set-failed", "error", "warning", "info", "debug", "set-env"]
 DEMARCATION: Final[str] = ":PA:"
 
 

@@ -1,10 +1,12 @@
 import json
 import os
+from typing import Any
+
 import pytest
 import pytest_mock
 
 import prepare_toolbox
-from prepare_toolbox.core import get_input, set_failed, set_output, debug, info, warning, error
+from prepare_toolbox.core import get_input, set_failed, set_output, debug, info, warning, error, set_env
 
 
 def test_get_input_present() -> None:
@@ -99,3 +101,22 @@ def test_error_exception(mocker: pytest_mock.MockerFixture) -> None:
     error(err)
     message = str(err)
     spy.assert_called_once_with("error", message)
+
+
+@pytest.mark.parametrize(
+    "key,value,expected",
+    [
+        ("prepare_key1", "value", "value"),
+        ("prepare_key2", 1.12, "1.12"),
+        ("prepare_key3", True, "True"),
+        ("prepare_key4", 1, "1"),
+        ("prepare_key5", {"test": "dict"}, '{"test": "dict"}'),
+    ]
+)
+def test_set_env(key: str, value: Any, expected: str,
+                 mocker: pytest_mock.MockerFixture, monkeypatch: pytest.MonkeyPatch) -> None:
+    spy = mocker.spy(prepare_toolbox.core, "issue_command")
+    set_env(key, value)
+    assert os.environ[key] == expected
+    del os.environ[key]
+    spy.assert_called_once_with("set-env", "", {key: value})
