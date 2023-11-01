@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prepare-toolbox"
-version = "0.3.0"
+version = "0.4.0"
 description = "Toolbox containing helper functions for prepare-assignment actions"
 authors = ["Bonajo <m.bonajo@fontys.nl>"]
 license = "MIT"

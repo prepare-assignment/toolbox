@@ -4,6 +4,7 @@ import sys
 from typing import Any, Union
 
 from prepare_toolbox.command import issue_command
+from prepare_toolbox.utils import convert_to_string
 
 
 def get_input(key: str, required: bool = False, trim_whitespace: bool = True) -> Any:
@@ -34,6 +35,11 @@ def get_input(key: str, required: bool = False, trim_whitespace: bool = True) ->
     elif required:
         raise Exception(f"Required input '{key}' not supplied")
     return None
+
+
+def set_env(key: str, value: Any) -> None:
+    os.environ[key] = convert_to_string(value)
+    issue_command("set-env", "", {key: value})
 
 
 def set_output(name: str, value: Any) -> None:
