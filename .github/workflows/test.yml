@@ -8,11 +8,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  checks: write
-
 jobs:
   test:
     uses: prepare-assignment/actions-ci/.github/workflows/test.yml@main
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
     with:
       mypy-argument: "prepare_toolbox"
