@@ -13,7 +13,7 @@ def __expand(path: str) -> Iterator[str]:
     return braceexpand(path)
 
 
-def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, Path, None],
+def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, Path],
                          allow_outside_working_dir: bool, recursive: bool) -> Set[str]:
     if globs is None:
         raise ValueError("Cannot find matching files without included glob")
@@ -34,7 +34,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
 
 
 def get_matching_files(included: Union[str, List[str]], excluded: Union[str, List[str], None] = None,
-                       relative_to: Union[str, None] = None, allow_outside_working_dir: bool = False,
+                       relative_to: Union[str, Path, None] = None, allow_outside_working_dir: bool = False,
                        recursive: bool = True) -> List[str]:
     """
     Get files matching the included glob and not matching the excluded glob.
@@ -54,7 +54,7 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
         if not os.path.isdir(relative_to):
             raise ValueError(f"'relative_to' should be a directory")
         # If relative is an absolute path it will overwrite the pwd
-        relative_to = Path(os.path.abspath(os.path.join(os.getcwd(), relative_to)))
+        relative_to = Path(os.path.abspath(os.path.join(os.getcwd(), relative_to)))  # type: ignore
         if not allow_outside_working_dir:
             # This will raise an ValueError if they are not relative
             # As we support python3.8, we cannot use is_relative_to
