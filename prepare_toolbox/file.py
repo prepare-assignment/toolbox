@@ -23,7 +23,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
     for g in globs:
         path = os.path.join(relative_to, g)
         for expanded in __expand(path):
-            for file in glob.glob(expanded, recursive=recursive):
+            for file in glob.iglob(expanded, recursive=recursive):
                 file = os.path.abspath(file)
                 if allow_outside_working_dir:
                     matched.add(file)
