@@ -1,23 +1,24 @@
-[tool.poetry]
+[project]
 name = "prepare-toolbox"
 version = "0.4.0"
 description = "Toolbox containing helper functions for prepare-assignment actions"
-authors = ["Bonajo <m.bonajo@fontys.nl>"]
-license = "MIT"
+authors = [{name = "Bonajo", email = "m.bonajo@fontys.nl"}]
+license = {text = "MIT"}
 readme = "README.md"
-packages = [{include = "prepare_toolbox"}]
-
-[tool.poetry.dependencies]
-python = "^3.8"
-braceexpand = "^0.1.7"
-
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.0"
-mypy = "^1.4.1"
-pytest-cov = "^4.1.0"
-pytest-mock = "^3.11.1"
+requires-python = ">=3.11"
+dependencies = [
+    "braceexpand>=0.1.7",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+test = [
+    "pytest>=9.0.3",
+    "mypy>=1.4.1",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "packaging>=24.0",
+]
