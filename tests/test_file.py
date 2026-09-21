@@ -111,3 +111,53 @@ def test_double_star_does_not_return_absolute_relative_to(monkeypatch: pytest.Mo
 def test_search_directory_is_never_returned(glob: str, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(test_project_dir)
     assert "." not in get_matching_files(glob)
+
+
+@pytest.mark.parametrize("directory", ["[abc]", "a{b,c}", "a[0-9]{x}"])
+def test_relative_to_with_special_characters(directory: str, tmp_path: Path,
+                                             monkeypatch: pytest.MonkeyPatch) -> None:
+    """The directory name used to become part of the glob pattern, so nothing matched"""
+    (tmp_path / directory / "sub").mkdir(parents=True)
+    (tmp_path / directory / "sub" / "file.txt").write_text("x")
+    monkeypatch.chdir(tmp_path)
+    assert get_matching_files("**/*.txt", relative_to=directory) == ["sub/file.txt"]
+
+
+def test_working_directory_with_special_characters(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    (tmp_path / "[abc]").mkdir()
+    (tmp_path / "[abc]" / "file.txt").write_text("x")
+    monkeypatch.chdir(tmp_path / "[abc]")
+    assert get_matching_files("*.txt") == ["file.txt"]
+
+
+def test_braces_in_glob_are_still_expanded(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    (tmp_path / "a{b,c}").mkdir()
+    for name in ["x.java", "y.xml", "z.txt"]:
+        (tmp_path / "a{b,c}" / name).write_text("x")
+    monkeypatch.chdir(tmp_path)
+    assert get_matching_files("*.{java,xml}", relative_to="a{b,c}") == ["x.java", "y.xml"]
+
+
+def test_outside_match_error_message(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    with pytest.raises(ValueError) as wrapped:
+        get_matching_files("../*.py", relative_to=None, allow_outside_working_dir=False)
+    message = str(wrapped.value)
+    assert "Glob '../*.py' matches" in message
+    assert "which is outside" in message
+    assert "allow_outside_working_dir" in message
+
+
+def test_relative_to_outside_error_message(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    with pytest.raises(ValueError) as wrapped:
+        get_matching_files("*", relative_to="..", allow_outside_working_dir=False)
+    message = str(wrapped.value)
+    assert "'relative_to' (..) is outside the working directory" in message
+    assert "allow_outside_working_dir" in message
+
+
+def test_absolute_glob(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    glob = Path(test_project_dir, "src", "main", "**", "*.java").as_posix()
+    assert get_matching_files(glob) == MAIN
