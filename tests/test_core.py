@@ -120,3 +120,29 @@ def test_set_env(key: str, value: Any, expected: str,
     assert os.environ[key] == expected
     del os.environ[key]
     spy.assert_called_once_with("set-env", "", {key: value})
+
+
+def test_get_input_string_strips(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PREPARE_TEST", json.dumps("  value\n"))
+    assert get_input("test") == "value"
+
+
+def test_get_input_string_no_trim(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PREPARE_TEST", json.dumps("  value\n"))
+    assert get_input("test", trim_whitespace=False) == "  value\n"
+
+
+def test_get_input_list_no_trim(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PREPARE_TEST", json.dumps([" a ", "b "]))
+    assert get_input("test", trim_whitespace=False) == [" a ", "b "]
+
+
+def test_get_input_mixed_list_strips_only_strings(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PREPARE_TEST", json.dumps([" a ", 1, True, None, " b"]))
+    assert get_input("test") == ["a", 1, True, None, "b"]
+
+
+@pytest.mark.parametrize("value", [1, 1.5, True, {"key": " value "}, []])
+def test_get_input_other_types_unchanged(value: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PREPARE_TEST", json.dumps(value))
+    assert get_input("test") == value
