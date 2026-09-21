@@ -26,11 +26,10 @@ def get_input(key: str, required: bool = False, trim_whitespace: bool = True) ->
         if trim_whitespace:
             # String we can strip
             if isinstance(loaded, str):
-                loaded.strip()
-            # Check if it is a list that contains strings (note: we cannot have list with multiple types)
-            elif isinstance(loaded, list) and len(loaded) > 0 and isinstance(loaded[0], str):
-                for idx, item in enumerate(loaded):
-                    loaded[idx] = item.strip()
+                loaded = loaded.strip()
+            # Strip the strings in a list (other items are left as is)
+            elif isinstance(loaded, list):
+                loaded = [item.strip() if isinstance(item, str) else item for item in loaded]
         return loaded
     elif required:
         raise Exception(f"Required input '{key}' not supplied")
