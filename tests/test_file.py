@@ -79,3 +79,35 @@ def test_outside_not_allowed_glob(monkeypatch: pytest.MonkeyPatch) -> None:
     with pytest.raises(ValueError):
         get_matching_files(["../**/*.py"], None, relative_to=None,
                                    allow_outside_working_dir=False, recursive=True)
+
+
+def test_double_star_does_not_return_search_directory(monkeypatch: pytest.MonkeyPatch) -> None:
+    """'**' also matched '.', the remove task would then remove the whole working directory"""
+    monkeypatch.chdir(test_project_dir)
+    files = get_matching_files("**")
+    assert "." not in files
+    assert "" not in files
+    # Directories below the search directory are still returned
+    assert "src" in files
+    assert "src/main/java/gradelist" in files
+    assert "pom.xml" in files
+
+
+def test_double_star_does_not_return_relative_to(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    files = get_matching_files("**", relative_to="src")
+    assert "." not in files
+    assert "main" in files
+
+
+def test_double_star_does_not_return_absolute_relative_to(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    files = get_matching_files("**", relative_to="src", allow_outside_working_dir=True)
+    assert Path(test_project_dir, "src").as_posix() not in files
+    assert Path(test_project_dir, "src", "main").as_posix() in files
+
+
+@pytest.mark.parametrize("glob", [".", "./", "src/..", "**/"])
+def test_search_directory_is_never_returned(glob: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(test_project_dir)
+    assert "." not in get_matching_files(glob)
