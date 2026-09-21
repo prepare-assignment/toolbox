@@ -25,11 +25,12 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
         for expanded in __expand(path):
             for file in glob.iglob(expanded, recursive=recursive):
                 file = os.path.abspath(file)
+                # Always use '/' (also on Windows), the paths end up in outputs that are used by other steps
                 if allow_outside_working_dir:
-                    matched.add(file)
+                    matched.add(Path(file).as_posix())
                 else:
                     relative = Path(file).relative_to(relative_to)
-                    matched.add(str(relative))
+                    matched.add(relative.as_posix())
     return matched
 
 
