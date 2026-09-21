@@ -20,21 +20,25 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
     if not isinstance(globs, list):
         globs = [globs]
     matched: Set[str] = set()
+    root = Path(relative_to)
     for g in globs:
-        path = os.path.join(relative_to, g)
-        for expanded in __expand(path):
-            for file in glob.iglob(expanded, recursive=recursive):
-                file = os.path.abspath(file)
+        # Only the glob is a pattern: the directory is passed as root_dir, so special characters in its name
+        # (e.g. '[abc]' or 'a{b,c}') are not interpreted
+        for expanded in __expand(g):
+            for match in glob.iglob(expanded, root_dir=root, recursive=recursive):
+                file = Path(os.path.abspath(os.path.join(root, match)))
                 # Never return the search directory itself (e.g. '**' also matches it), removing or copying
                 # it would affect the whole directory
-                if Path(file) == Path(relative_to):
+                if file == root:
                     continue
                 # Always use '/' (also on Windows), the paths end up in outputs that are used by other steps
                 if allow_outside_working_dir:
-                    matched.add(Path(file).as_posix())
+                    matched.add(file.as_posix())
+                elif not file.is_relative_to(root):
+                    raise ValueError(f"Glob '{g}' matches '{file.as_posix()}', which is outside '{root.as_posix()}', "
+                                     f"set allow_outside_working_dir to allow this")
                 else:
-                    relative = Path(file).relative_to(relative_to)
-                    matched.add(relative.as_posix())
+                    matched.add(file.relative_to(root).as_posix())
     return matched
 
 
@@ -58,12 +62,12 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
     if relative_to is not None:
         if not os.path.isdir(relative_to):
             raise ValueError(f"'relative_to' should be a directory")
+        original = relative_to
         # If relative is an absolute path it will overwrite the pwd
         relative_to = Path(os.path.abspath(os.path.join(os.getcwd(), relative_to)))  # type: ignore
-        if not allow_outside_working_dir:
-            # This will raise an ValueError if they are not relative
-            # As we support python3.8, we cannot use is_relative_to
-            relative_to.relative_to(os.getcwd())
+        if not allow_outside_working_dir and not relative_to.is_relative_to(os.getcwd()):  # type: ignore
+            raise ValueError(f"'relative_to' ({original}) is outside the working directory ({os.getcwd()}), "
+                             f"set allow_outside_working_dir to allow this")
     else:
         relative_to = Path(os.getcwd())
 
