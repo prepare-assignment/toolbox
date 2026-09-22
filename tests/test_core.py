@@ -39,7 +39,7 @@ def test_get_input_list_strips() -> None:
 def test_set_failed_message(mocker: pytest_mock.MockerFixture) -> None:
     spy = mocker.spy(prepare_toolbox.core, "issue_command")
     message = "Failed message"
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
+    with pytest.raises(SystemExit):
         set_failed(message)
     spy.assert_called_once_with("set-failed", message)
 
@@ -47,7 +47,7 @@ def test_set_failed_message(mocker: pytest_mock.MockerFixture) -> None:
 def test_set_failed_error(mocker: pytest_mock.MockerFixture) -> None:
     spy = mocker.spy(prepare_toolbox.core, "issue_command")
     message = "Failed message"
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
+    with pytest.raises(SystemExit):
         set_failed(Exception(message))
     spy.assert_called_once_with("set-failed", message)
 
@@ -55,7 +55,7 @@ def test_set_failed_error(mocker: pytest_mock.MockerFixture) -> None:
 def test_set_failed_exits() -> None:
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         set_failed("Failed message")
-    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.type is SystemExit
     assert pytest_wrapped_e.value.code == 1
 
 
