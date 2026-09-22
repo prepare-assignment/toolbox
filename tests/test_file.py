@@ -161,3 +161,26 @@ def test_absolute_glob(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(test_project_dir)
     glob = Path(test_project_dir, "src", "main", "**", "*.java").as_posix()
     assert get_matching_files(glob) == MAIN
+
+
+@pytest.fixture
+def hidden_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    for path in [".gitignore", "README.md", "src/A.java", "src/.hidden", ".git/config"]:
+        (tmp_path / path).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / path).write_text("x")
+    monkeypatch.chdir(tmp_path)
+    return tmp_path
+
+
+def test_hidden_files_excluded_by_default(hidden_project: Path) -> None:
+    assert get_matching_files("**/*", recursive=True) == ["README.md", "src", "src/A.java"]
+
+
+def test_include_hidden(hidden_project: Path) -> None:
+    files = get_matching_files("**/*", include_hidden=True)
+    assert files == [".git", ".git/config", ".gitignore", "README.md", "src", "src/.hidden", "src/A.java"]
+
+
+def test_include_hidden_with_excluded_hidden_directory(hidden_project: Path) -> None:
+    files = get_matching_files("**/*", excluded=[".git", ".git/**"], include_hidden=True)
+    assert files == [".gitignore", "README.md", "src", "src/.hidden", "src/A.java"]

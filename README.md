@@ -39,7 +39,8 @@ A common task for actions is to find files based on a glob. To make this repetit
 - `excluded: Union[str, List[str], None]`: Glob(s) that should be excluded from being matched. I.e. if a path matches the `included` glob, it should not be processed if it also matches the `excluded` glob. Default: `None`
 - `relative_to: : Union[str, None]`: Set relative path from where the globs should be matched. If `None` the current working directory is used. Default: `None`
 - `allow_outside_working_dir: bool`: Allow `relative_to` to be outside the current working directory. Allow the matched glob(s) to be outside the `relative_to` directory. Default: `False`
-- `recursive: bool`: If true the glob should recurse directories. Default: `True` 
+- `recursive: bool`: If true the glob should recurse directories. Default: `True`
+- `include_hidden: bool`: If true wildcards (e.g. `*` and `**`) also match hidden files and directories (starting with a `.`), for both `included` and `excluded`. Default: `False`
 
 ## Creating zip files
 

@@ -14,7 +14,7 @@ def __expand(path: str) -> Iterator[str]:
 
 
 def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, Path],
-                         allow_outside_working_dir: bool, recursive: bool) -> Set[str]:
+                         allow_outside_working_dir: bool, recursive: bool, include_hidden: bool) -> Set[str]:
     if globs is None:
         raise ValueError("Cannot find matching files without included glob")
     if not isinstance(globs, list):
@@ -25,7 +25,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
         # Only the glob is a pattern: the directory is passed as root_dir, so special characters in its name
         # (e.g. '[abc]' or 'a{b,c}') are not interpreted
         for expanded in __expand(g):
-            for match in glob.iglob(expanded, root_dir=root, recursive=recursive):
+            for match in glob.iglob(expanded, root_dir=root, recursive=recursive, include_hidden=include_hidden):
                 file = Path(os.path.abspath(os.path.join(root, match)))
                 # Never return the search directory itself (e.g. '**' also matches it), removing or copying
                 # it would affect the whole directory
@@ -44,7 +44,7 @@ def __get_matching_files(globs: Union[str, List[str]], relative_to: Union[str, P
 
 def get_matching_files(included: Union[str, List[str]], excluded: Union[str, List[str], None] = None,
                        relative_to: Union[str, Path, None] = None, allow_outside_working_dir: bool = False,
-                       recursive: bool = True) -> List[str]:
+                       recursive: bool = True, include_hidden: bool = False) -> List[str]:
     """
     Get files matching the included glob and not matching the excluded glob.
     :param included: Glob(s) that should be matched
@@ -54,6 +54,8 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
     :param allow_outside_working_dir: Allow `relative_to` to be outside the current working directory.
         Allow the matched glob(s) to be outside the `relative_to` directory.
     :param recursive: If true the glob should recurse directories.
+    :param include_hidden: If true wildcards (e.g. '*' and '**') also match hidden files and directories
+        (starting with a '.'). Applies to both the included and the excluded globs.
     :return List[str]: List of matched files (as posix strings)
     :raises ValueError: - If either relative_to is outside the working directory and allow_outside_working_dir is false.
                         - If a matched glob is outside the relative_to directory and allow_outside_working_dir is false.
@@ -72,9 +74,11 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
         relative_to = Path(os.getcwd())
 
     matched_included = __get_matching_files(included, relative_to=relative_to,
-                                            allow_outside_working_dir=allow_outside_working_dir, recursive=recursive)
+                                            allow_outside_working_dir=allow_outside_working_dir, recursive=recursive,
+                                            include_hidden=include_hidden)
     if excluded is not None:
         matched_excluded = __get_matching_files(excluded, relative_to=relative_to,
-                                                allow_outside_working_dir=allow_outside_working_dir, recursive=recursive)
+                                                allow_outside_working_dir=allow_outside_working_dir, recursive=recursive,
+                                                include_hidden=include_hidden)
         matched_included -= matched_excluded
     return sorted(list(matched_included))
