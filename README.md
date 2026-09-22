@@ -6,7 +6,6 @@ This repository contains helper functions for:
   - Retrieving input
   - Setting output
 - Finding files based on globs
-- Creating zip files
 
 ## Interacting with `prepare_assignment`
 
@@ -41,14 +40,6 @@ A common task for actions is to find files based on a glob. To make this repetit
 - `allow_outside_working_dir: bool`: Allow `relative_to` to be outside the current working directory. Allow the matched glob(s) to be outside the `relative_to` directory. Default: `False`
 - `recursive: bool`: If true the glob should recurse directories. Default: `True`
 - `include_hidden: bool`: If true wildcards (e.g. `*` and `**`) also match hidden files and directories (starting with a `.`), for both `included` and `excluded`. Default: `False`
-
-## Creating zip files
-
-To help with creating zip files the `zip.py` adds a helper method `create_zip` to easily create a simple zip archive. It takes the following parameters:
-
-- `name: str`: name of the archive
-- `files: List[str]`: paths to the files to include
-- `output: Optional[str]`: the output directory to write to (default to current working directory). Default: `None`
 
 ## Releases
 
