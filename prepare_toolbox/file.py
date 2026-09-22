@@ -1,8 +1,8 @@
 import glob
 import os
 import sys
-from pathlib import Path, PurePath
-from typing import Union, List, Iterable, Set, Iterator
+from pathlib import Path
+from typing import Union, List, Set, Iterator
 
 from braceexpand import braceexpand
 
@@ -63,7 +63,7 @@ def get_matching_files(included: Union[str, List[str]], excluded: Union[str, Lis
     """
     if relative_to is not None:
         if not os.path.isdir(relative_to):
-            raise ValueError(f"'relative_to' should be a directory")
+            raise ValueError("'relative_to' should be a directory")
         original = relative_to
         # If relative is an absolute path it will overwrite the pwd
         relative_to = Path(os.path.abspath(os.path.join(os.getcwd(), relative_to)))  # type: ignore

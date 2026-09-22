@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from typing import Any, Union
+from typing import Any, NoReturn, Union
 
 from prepare_toolbox.command import issue_command
 from prepare_toolbox.utils import convert_to_string
@@ -45,10 +45,8 @@ def set_output(name: str, value: Any) -> None:
     issue_command("set-output", "", {name: value})
 
 
-def set_failed(message: Union[str, Exception]) -> None:
-    if isinstance(message, Exception):
-        message = str(message)
-    issue_command("set-failed", message)  # type: ignore
+def set_failed(message: Union[str, Exception]) -> NoReturn:
+    issue_command("set-failed", str(message))
     sys.exit(1)
 
 
