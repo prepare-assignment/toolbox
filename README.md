@@ -6,7 +6,6 @@ This repository contains helper functions for:
   - Retrieving input
   - Setting output
 - Finding files based on globs
-- Creating zip files
 
 ## Interacting with `prepare_assignment`
 
@@ -42,23 +41,15 @@ A common task for actions is to find files based on a glob. To make this repetit
 - `recursive: bool`: If true the glob should recurse directories. Default: `True`
 - `include_hidden: bool`: If true wildcards (e.g. `*` and `**`) also match hidden files and directories (starting with a `.`), for both `included` and `excluded`. Default: `False`
 
-## Creating zip files
-
-To help with creating zip files the `zip.py` adds a helper method `create_zip` to easily create a simple zip archive. It takes the following parameters:
-
-- `name: str`: name of the archive
-- `files: List[str]`: paths to the files to include
-- `output: Optional[str]`: the output directory to write to (default to current working directory). Default: `None`
-
 ## Releases
 
 Releases are automated with [semantic-release](https://semantic-release.gitbook.io/). Pull requests are squash merged, so the PR title becomes the commit on `main` and must follow [Conventional Commits](https://www.conventionalcommits.org/) (checked on every PR):
 
 | PR title | Release |
 |----------|---------|
-| `fix: ...` | patch (1.2.3 → 1.2.4) |
+| `fix: ...`, `perf: ...` | patch (1.2.3 → 1.2.4) |
 | `feat: ...` | minor (1.2.3 → 1.3.0) |
-| `feat!: ...` or a `BREAKING CHANGE:` footer | major (1.2.3 → 2.0.0) |
-| `docs:`, `chore:`, `ci:`, `build:`, `refactor:`, `test:`, `style:`, `perf:` | no release |
+| `!` after the type (e.g. `feat!: ...`, `refactor!: ...`) or a `BREAKING CHANGE:` footer | major (1.2.3 → 2.0.0) |
+| `docs:`, `chore:`, `ci:`, `build:`, `refactor:`, `test:`, `style:`, `revert:` | no release |
 
 On every merge to `main` the next version is determined, tagged (`vX.Y.Z`), a GitHub release is created and the package is published to PyPI. The version is set during the build and is not committed, so the version in `pyproject.toml` is not the released version.
