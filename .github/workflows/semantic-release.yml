@@ -45,7 +45,7 @@ jobs:
       # release-notes-generator uses.
       - name: Semantic release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v7.1.2
+        uses: cycjimmy/semantic-release-action@v8.1.2
         with:
           extra_plugins: |
             conventional-changelog-conventionalcommits@9
